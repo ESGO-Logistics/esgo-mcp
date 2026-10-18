@@ -68,3 +68,33 @@ jobs:
           name: dist
           path: dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
+
+  mcp-registry:
+    # Lists the release in the official MCP Registry (registry.modelcontextprotocol.io).
+    # Login via GitHub OIDC (namespace io.github.ESGO-Logistics), no secret. The registry
+    # checks that the PyPI package exists and that its README contains "mcp-name: <name>".
+    needs: pypi
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Wait until PyPI serves the new version
+        run: |
+          version=$(python3 -c "import json; print(json.load(open('server.json'))['version'])")
+          for i in $(seq 1 30); do
+            if curl -sf "https://pypi.org/pypi/esgo-mcp/$version/json" > /dev/null; then exit 0; fi
+            sleep 10
+          done
+          echo "esgo-mcp $version not visible on PyPI after 5 minutes"; exit 1
+
+      - name: Install mcp-publisher
+        run: |
+          OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+          ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+          curl -sL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_${OS}_${ARCH}.tar.gz" | tar xz mcp-publisher
+
+      - run: ./mcp-publisher login github-oidc
+      - run: ./mcp-publisher publish

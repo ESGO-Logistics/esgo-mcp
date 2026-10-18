@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "esgo-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for the ESGO API: lets AI assistants search empty-run capacity and publish transport requests"
 readme = "README.md"
 license = "MIT"
@@ -38,7 +38,7 @@ packages = ["src/esgo_mcp"]
 
 # Explicit list, so nothing from the working directory (e.g. a .venv) ends up in the sdist.
 [tool.hatch.build.targets.sdist]
-include = ["src/esgo_mcp", "tests", "scripts", "README.md", "CHANGELOG.md", "LICENSE", "pyproject.toml"]
+include = ["src/esgo_mcp", "tests", "scripts", "server.json", "README.md", "CHANGELOG.md", "LICENSE", "pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

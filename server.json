@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.ESGO-Logistics/esgo-mcp",
+  "title": "ESGO",
+  "description": "ESGO API for AI assistants: search empty-run truck capacity and publish transport requests",
+  "websiteUrl": "https://es-go.de/developers",
+  "repository": {
+    "url": "https://github.com/ESGO-Logistics/esgo-mcp",
+    "source": "github"
+  },
+  "version": "0.1.1",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "esgo-mcp",
+      "version": "0.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ESGO_API_KEY",
+          "description": "Your ESGO API key (esgo_live_...), issued by ESGO",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "ESGO_BASE_URL",
+          "description": "Base URL of the ESGO API",
+          "default": "https://api.es-go.de",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}

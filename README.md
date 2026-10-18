@@ -1,5 +1,7 @@
 # ESGO MCP server
 
+<!-- mcp-name: io.github.ESGO-Logistics/esgo-mcp -->
+
 *[Deutsche Version weiter unten](#esgo-mcp-server-deutsch)*
 
 Lets AI assistants (Claude, Cursor, VS Code, Windsurf and others that speak the

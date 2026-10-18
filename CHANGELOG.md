@@ -3,6 +3,12 @@
 All notable changes to this package are documented here. Versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.1 (2026-10-18)
+
+- Listed in the official MCP Registry (`io.github.ESGO-Logistics/esgo-mcp`):
+  `server.json`, ownership line in the README, publish step in the release workflow.
+- Quieter log: no line per HTTP request.
+
 ## 0.1.0 (2026-10-18)
 
 First release.
