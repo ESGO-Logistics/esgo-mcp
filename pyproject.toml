@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "esgo-mcp"
+version = "0.1.0"
+description = "MCP server for the ESGO API: lets AI assistants search empty-run capacity and publish transport requests"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "ESGO Logistics UG (haftungsbeschränkt)" }]
+requires-python = ">=3.11"
+dependencies = ["mcp>=2.3,<3", "httpx2>=2.10"]
+keywords = ["esgo", "mcp", "model-context-protocol", "logistics", "freight", "ai"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries",
+]
+
+[project.scripts]
+esgo-mcp = "esgo_mcp.server:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://es-go.de/developers"
+Documentation = "https://api.es-go.de/v1/docs"
+Source = "https://github.com/ESGO-Logistics/esgo-mcp"
+Changelog = "https://github.com/ESGO-Logistics/esgo-mcp/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/esgo_mcp"]
+
+# Explicit list, so nothing from the working directory (e.g. a .venv) ends up in the sdist.
+[tool.hatch.build.targets.sdist]
+include = ["src/esgo_mcp", "tests", "scripts", "README.md", "CHANGELOG.md", "LICENSE", "pyproject.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

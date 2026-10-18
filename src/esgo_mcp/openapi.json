@@ -1,0 +1,976 @@
+{
+  "components": {
+    "responses": {
+      "DEFAULT_ERROR": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Default error response"
+      },
+      "UNPROCESSABLE_ENTITY": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Unprocessable Entity"
+      }
+    },
+    "schemas": {
+      "ApiKeyInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "description": "Label given by ESGO.",
+            "example": "TMS production",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "Visible start of the key.",
+            "example": "esgo_live_Ab3dE9",
+            "type": "string"
+          },
+          "scopes": {
+            "description": "Granted scopes.",
+            "example": [
+              "matches:read"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "created_at",
+          "id",
+          "name",
+          "prefix",
+          "scopes"
+        ],
+        "type": "object"
+      },
+      "DepartureWindow": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "description": "Latest departure, local time Europe/Berlin.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "start": {
+            "description": "Earliest departure, local time Europe/Berlin.",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "end",
+          "start"
+        ],
+        "type": "object"
+      },
+      "Error": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "ErrorBody": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "description": "Machine-readable error code.",
+            "example": "invalid_parameter",
+            "type": "string"
+          },
+          "message": {
+            "description": "Human-readable explanation.",
+            "type": "string"
+          },
+          "param": {
+            "description": "Request field the error refers to, if any.",
+            "example": "weight_kg",
+            "nullable": true,
+            "type": "string"
+          },
+          "type": {
+            "description": "Error category.",
+            "enum": [
+              "authentication_error",
+              "permission_error",
+              "invalid_request_error",
+              "rate_limit_error",
+              "api_error"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "type"
+        ],
+        "type": "object"
+      },
+      "Match": {
+        "additionalProperties": false,
+        "properties": {
+          "booking_url": {
+            "description": "Opens the booking flow on es-go.de. Booking happens there, not through the API.",
+            "type": "string"
+          },
+          "co2_saved_kg_estimate": {
+            "description": "Rough estimate of CO2 saved in kilograms; null where no estimate exists.",
+            "example": 1420.3,
+            "nullable": true,
+            "type": "number"
+          },
+          "departure_window": {
+            "$ref": "#/components/schemas/DepartureWindow"
+          },
+          "destination_area": {
+            "description": "Destination of the trip, city level.",
+            "example": "80331 München",
+            "type": "string"
+          },
+          "detour_km": {
+            "description": "Extra kilometers for the carrier.",
+            "example": 14.2,
+            "nullable": true,
+            "type": "number"
+          },
+          "free_capacity_kg": {
+            "description": "Free payload in kilograms before your load.",
+            "example": 9000,
+            "type": "number"
+          },
+          "free_capacity_ldm": {
+            "description": "Free loading meters on this trip before your load.",
+            "example": 6.2,
+            "type": "number"
+          },
+          "instant_bookable": {
+            "description": "The carrier offers a fixed price for this trip.",
+            "type": "boolean"
+          },
+          "instant_price_eur": {
+            "description": "The carrier's standing fixed-price offer in EUR, if any.",
+            "example": 690,
+            "nullable": true,
+            "type": "number"
+          },
+          "match_score": {
+            "description": "How well the trip fits, 0 to 100.",
+            "example": 87.5,
+            "type": "number"
+          },
+          "object": {
+            "enum": [
+              "match"
+            ],
+            "type": "string"
+          },
+          "origin_area": {
+            "description": "Origin of the trip, city level.",
+            "example": "47057 Duisburg",
+            "type": "string"
+          },
+          "price_estimate_eur": {
+            "description": "Non-binding price estimate in EUR. Not an offer; null where no estimate exists.",
+            "example": 640,
+            "nullable": true,
+            "type": "number"
+          },
+          "route_id": {
+            "description": "ID of the offered trip.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "booking_url",
+          "departure_window",
+          "destination_area",
+          "free_capacity_kg",
+          "free_capacity_ldm",
+          "instant_bookable",
+          "match_score",
+          "object",
+          "origin_area",
+          "route_id"
+        ],
+        "type": "object"
+      },
+      "MatchList": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            },
+            "type": "array"
+          },
+          "object": {
+            "enum": [
+              "list"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "object"
+        ],
+        "type": "object"
+      },
+      "MatchSearchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "destination": {
+            "description": "Destination, ideally postcode and city.",
+            "example": "80331 München",
+            "maxLength": 255,
+            "minLength": 2,
+            "type": "string"
+          },
+          "loading_meters": {
+            "default": null,
+            "description": "Loading meters needed (max 13.6).",
+            "example": 4.8,
+            "maximum": 13.6,
+            "minimum": 0.0,
+            "nullable": true,
+            "type": "number"
+          },
+          "loading_requirement": {
+            "default": "any",
+            "description": "How the cargo has to be loaded. \"any\" never filters; \"seite\" (side) and \"oben\" (top) exclude box bodies; \"heck\" means rear loading.",
+            "enum": [
+              "any",
+              "heck",
+              "seite",
+              "oben"
+            ],
+            "example": "any",
+            "type": "string"
+          },
+          "origin": {
+            "description": "Origin, ideally postcode and city.",
+            "example": "47057 Duisburg",
+            "maxLength": 255,
+            "minLength": 2,
+            "type": "string"
+          },
+          "service_ids": {
+            "default": [],
+            "description": "Required additional services (ESGO service IDs).",
+            "example": [],
+            "items": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "maxItems": 20,
+            "type": "array"
+          },
+          "weight_kg": {
+            "description": "Cargo weight in kilograms.",
+            "example": 12000,
+            "maximum": 40000.0,
+            "minimum": 0.0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "destination",
+          "origin",
+          "weight_kg"
+        ],
+        "type": "object"
+      },
+      "MatchSearchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            },
+            "type": "array"
+          },
+          "distance_km": {
+            "description": "Road distance of your route.",
+            "example": 612.4,
+            "type": "number"
+          },
+          "match_count": {
+            "description": "Number of matching trips found (data may be shorter).",
+            "example": 3,
+            "type": "integer"
+          },
+          "object": {
+            "enum": [
+              "match_search"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "distance_km",
+          "match_count",
+          "object"
+        ],
+        "type": "object"
+      },
+      "Me": {
+        "additionalProperties": false,
+        "properties": {
+          "account_role": {
+            "description": "Role of the ESGO account the key belongs to.",
+            "example": "buyer",
+            "type": "string"
+          },
+          "key": {
+            "$ref": "#/components/schemas/ApiKeyInfo"
+          },
+          "object": {
+            "enum": [
+              "me"
+            ],
+            "type": "string"
+          },
+          "quotas": {
+            "items": {
+              "$ref": "#/components/schemas/Quota"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "account_role",
+          "key",
+          "object",
+          "quotas"
+        ],
+        "type": "object"
+      },
+      "OpenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dashboard_url": {
+            "description": "The request in the ESGO dashboard.",
+            "type": "string"
+          },
+          "expires_at": {
+            "description": "End of the latest time window.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "matches_found": {
+            "description": "Matching trips found right away.",
+            "example": 2,
+            "type": "integer"
+          },
+          "object": {
+            "enum": [
+              "open_request"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "description": "Status of the request.",
+            "example": "active",
+            "type": "string"
+          }
+        },
+        "required": [
+          "created_at",
+          "dashboard_url",
+          "expires_at",
+          "id",
+          "matches_found",
+          "object",
+          "status"
+        ],
+        "type": "object"
+      },
+      "OpenRequestCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "cargo_description": {
+            "default": "",
+            "description": "Free text for the carrier.",
+            "example": "12 EUR pallets, stackable",
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "cargo_type": {
+            "description": "Kind of cargo.",
+            "example": "Paletten",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "destination": {
+            "description": "Destination, ideally postcode and city.",
+            "example": "80331 München",
+            "maxLength": 255,
+            "minLength": 2,
+            "type": "string"
+          },
+          "loading_meters": {
+            "description": "Loading meters needed (max 13.6).",
+            "example": 4.8,
+            "maximum": 13.6,
+            "minimum": 0.0,
+            "type": "number"
+          },
+          "loading_requirement": {
+            "default": "any",
+            "description": "How the cargo has to be loaded. \"any\" never filters; \"seite\" (side) and \"oben\" (top) exclude box bodies; \"heck\" means rear loading.",
+            "enum": [
+              "any",
+              "heck",
+              "seite",
+              "oben"
+            ],
+            "example": "any",
+            "type": "string"
+          },
+          "origin": {
+            "description": "Origin, ideally postcode and city.",
+            "example": "47057 Duisburg",
+            "maxLength": 255,
+            "minLength": 2,
+            "type": "string"
+          },
+          "service_ids": {
+            "default": [],
+            "description": "Required additional services (ESGO service IDs).",
+            "example": [],
+            "items": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "maxItems": 20,
+            "type": "array"
+          },
+          "target_price_eur": {
+            "default": null,
+            "description": "Optional target price in EUR shown to carriers as orientation.",
+            "example": 650,
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "nullable": true,
+            "type": "number"
+          },
+          "time_windows": {
+            "description": "Pickup time windows; at least one.",
+            "items": {
+              "$ref": "#/components/schemas/TimeWindow"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "type": "array"
+          },
+          "weight_kg": {
+            "description": "Cargo weight in kilograms.",
+            "example": 12000,
+            "maximum": 40000.0,
+            "minimum": 0.0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "cargo_type",
+          "destination",
+          "loading_meters",
+          "origin",
+          "time_windows",
+          "weight_kg"
+        ],
+        "type": "object"
+      },
+      "Quota": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "Calls per rolling 24 hours.",
+            "example": 200,
+            "type": "integer"
+          },
+          "name": {
+            "description": "Operation the quota applies to.",
+            "example": "matches_search",
+            "type": "string"
+          },
+          "remaining": {
+            "description": "Calls left in the current window.",
+            "example": 198,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "limit",
+          "name",
+          "remaining"
+        ],
+        "type": "object"
+      },
+      "TimeWindow": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "description": "End, ISO 8601. Must be after start and in the future.",
+            "example": "2026-10-20T16:00:00",
+            "format": "date-time",
+            "type": "string"
+          },
+          "start": {
+            "description": "Start, ISO 8601. Without offset the time is local time Europe/Berlin.",
+            "example": "2026-10-20T08:00:00",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "end",
+          "start"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "description": "API key issued by ESGO, sent as \"Authorization: Bearer esgo_live_...\".",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "name": "ESGO",
+      "url": "https://es-go.de/developers"
+    },
+    "description": "Search free truck capacity on empty runs and post open transport requests on ESGO. ESGO is a broker: prices are non-binding estimates or the standing offers of carriers, and booking happens on es-go.de.",
+    "title": "ESGO API",
+    "version": "v1"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/matches/search": {
+      "post": {
+        "description": "Finds trips whose route, time and free capacity fit your shipment. Prices are non-binding estimates; a fixed price is the standing offer of the carrier. Counts against the daily quota \"matches_search\".",
+        "operationId": "matches_search",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatchSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchSearchResult"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Missing, invalid, expired or revoked API key."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The API key lacks the scope, or the account has no active plan or is disabled."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit or daily quota reached. Retry after the number of seconds in Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until the next attempt.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The ESGO API is switched off."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Search matching capacity",
+        "tags": [
+          "matches"
+        ],
+        "x-esgo-scope": "matches:read"
+      }
+    },
+    "/v1/me": {
+      "get": {
+        "description": "Use this call to check that your key works and how many calls are left today. It needs no scope.",
+        "operationId": "me_retrieve",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Me"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Missing, invalid, expired or revoked API key."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The API key lacks the scope, or the account has no active plan or is disabled."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit or daily quota reached. Retry after the number of seconds in Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until the next attempt.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The ESGO API is switched off."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Retrieve the current API key",
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/v1/open-requests": {
+      "post": {
+        "description": "Posts a transport request that carriers on ESGO see. ESGO matches it against existing trips right away and against every new trip later. Counts against the daily quota \"open_requests_create\". Not retried automatically: a repeated call creates a second request.",
+        "operationId": "open_requests_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenRequestCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenRequest"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Missing, invalid, expired or revoked API key."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The API key lacks the scope, or the account has no active plan or is disabled."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit or daily quota reached. Retry after the number of seconds in Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until the next attempt.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The ESGO API is switched off."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create an open transport request",
+        "tags": [
+          "open_requests"
+        ],
+        "x-esgo-scope": "open_requests:write"
+      }
+    },
+    "/v1/open-requests/{request_id}/matches": {
+      "get": {
+        "description": "Trips ESGO has matched to one of your open requests, best first. Reading them does not mark them as seen in the dashboard.",
+        "operationId": "open_requests_list_matches",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Missing, invalid, expired or revoked API key."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The API key lacks the scope, or the account has no active plan or is disabled."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "No such resource, or it belongs to another account."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit or daily quota reached. Retry after the number of seconds in Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until the next attempt.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The ESGO API is switched off."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List matches of an open request",
+        "tags": [
+          "open_requests"
+        ],
+        "x-esgo-scope": "open_requests:read"
+      },
+      "parameters": [
+        {
+          "description": "ID of one of your open requests, as returned by open_requests_create.",
+          "in": "path",
+          "name": "request_id",
+          "required": true,
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      ]
+    }
+  },
+  "servers": [
+    {
+      "description": "Production",
+      "url": "https://api.es-go.de"
+    }
+  ],
+  "tags": [
+    {
+      "description": "The API key in use and its remaining daily quotas.",
+      "name": "account"
+    },
+    {
+      "description": "Search free truck capacity on trips that carriers offer on ESGO.",
+      "name": "matches"
+    },
+    {
+      "description": "Post open transport requests and read the trips ESGO matches to them.",
+      "name": "open_requests"
+    }
+  ]
+}
